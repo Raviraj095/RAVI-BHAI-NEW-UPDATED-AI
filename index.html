@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RAVI PAID PREDICTOR</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #121212;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #a0f0a0;
+      user-select: none;
+    }
+
+    .header {
+      width: 100%;
+      background: #223322;
+      color: #99ff99;
+      text-align: center;
+      padding: 10px 0;
+      font-weight: bold;
+      font-size: 18px;
+      box-shadow: 0 0 15px #66ff66;
+    }
+
+    .card {
+      backdrop-filter: blur(12px);
+      background: rgba(34, 51, 34, 0.6);
+      border: 1px solid #66ff66;
+      border-radius: 16px;
+      padding: 25px 30px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 8px 32px #44ff44aa;
+      margin: 15px 0;
+      color: #ccffcc;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      color: #99ff99;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 12px 0 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      background-color: #1b2a1b;
+      color: #aaffaa;
+      outline: none;
+      box-shadow: inset 0 0 6px #44ff44aa;
+    }
+
+    input::placeholder {
+      color: #77bb77;
+    }
+
+    button {
+      background-color: #44bb44;
+      color: #002200;
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 8px #66ff66;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #66dd66;
+    }
+
+    #error-message {
+      color: #ff6666;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      min-height: 18px;
+    }
+
+    #main-content {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .box {
+      background: rgba(34, 51, 34, 0.8);
+      border: 1.5px solid #55ff55;
+      border-radius: 16px;
+      padding: 20px 25px;
+      margin: 10px 0;
+      width: 100%;
+      box-shadow: 0 0 10px #55ff55aa;
+      color: #ccffcc;
+    }
+
+    .box h3 {
+      margin-bottom: 12px;
+      color: #aaffaa;
+    }
+
+    .prediction-text {
+      font-weight: bold;
+      font-size: 20px;
+      color: #88ff88;
+      text-align: center;
+    }
+
+    .info-text {
+      font-size: 16px;
+      text-align: center;
+    }
+
+    #history-list {
+      list-style: none;
+      padding-left: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+      color: #bbffbb;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    #history-list li {
+      background: rgba(85, 255, 85, 0.15);
+      margin-bottom: 6px;
+      padding: 6px 12px;
+      border-radius: 10px;
+    }
+
+    .owner-tag {
+      font-size: 12px;
+      text-align: center;
+      margin-top: 8px;
+      color: #77cc77;
+      user-select: none;
+    }
+
+    .popup {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #223322;
+      color: #aaffaa;
+      padding: 15px 20px;
+      border: 2px solid #44ff44;
+      border-radius: 12px;
+      z-index: 9999;
+      text-align: center;
+      max-width: 90%;
+      font-size: 13px;
+      box-shadow: 0 0 15px #44ff44;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    MADE BY RAVI BHAI
+  </div>
+
+  <div class="card" id="login-box">
+    <h2>Login</h2>
+    <input type="password" id="password" placeholder="Enter Password" autocomplete="off" />
+    <button onclick="login()">Login</button>
+    <div id="error-message"></div>
+    <div class="owner-tag">MOD OWNER: @raviraj095 &amp; @silentxkiller_76</div>
+  </div>
+
+  <div class="card" id="main-content">
+    <h2>RAVI PAID PREDICTOR</h2>
+
+    <div class="box" id="prediction-box">
+      <h3>Prediction</h3>
+      <div class="prediction-text" id="prediction-result">Waiting for prediction...</div>
+    </div>
+
+    <div class="box" id="time-box">
+      <h3>Current Time & Period</h3>
+      <div class="info-text" id="time">Loading time...</div>
+      <div class="info-text" id="period-number">Loading period...</div>
+    </div>
+
+    <div class="box" id="history-box">
+      <h3>Prediction History</h3>
+      <ul id="history-list"></ul>
+    </div>
+
+    <div class="owner-tag">MOD OWNER: @raviraj095 &amp; @silentxkiller_76</div>
+  </div>
+
+  <script>
+    let storedPassword = "R&S";
+
+    function login() {
+      const inputPassword = document.getElementById("password").value.trim();
+      const errorMsg = document.getElementById("error-message");
+      if (inputPassword === storedPassword) {
+        errorMsg.textContent = "";
+        document.getElementById("login-box").style.display = "none";
+        document.getElementById("main-content").style.display = "flex";
+        showPopup();
+        fetchCurrentGameIssue();
+        setInterval(fetchCurrentGameIssue, 60000);
+      } else {
+        errorMsg.textContent = "Incorrect Password";
+      }
+    }
+
+    function showPopup() {
+      const popup = document.createElement('div');
+      popup.className = 'popup';
+      popup.innerHTML = `
+        Only buy for owner & his friends<br>
+        Owner: @raviraj095 & @silentxkiller_76<br>
+        Friends: aditya & prince only from these people otherwise no guarantee
+      `;
+      document.body.appendChild(popup);
+      setTimeout(() => popup.remove(), 6000);
+    }
+
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('time').textContent = `Time: ${now.toLocaleTimeString()}`;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    let history = [];
+    let latestPeriod = null;
+    let forcedWin = false;
+    let winStreakCount = 0;
+    let allowLoss = false;
+
+    async function fetchCurrentGameIssue() {
+      const apiUrl = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+      const requestData = {
+        typeId: 1,
+        language: 0,
+        random: "40079dcba93a48769c6ee9d4d4fae23f",
+        signature: "D12108C4F57C549D82B23A91E0FA20AE",
+        timestamp: 1727792520,
+      };
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          body: JSON.stringify(requestData),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.code === 0) {
+            const currentPeriod = data.data.issueNumber;
+            if (currentPeriod !== latestPeriod) {
+              latestPeriod = currentPeriod;
+              document.getElementById('period-number').textContent = `Period: ${latestPeriod}`;
+              generatePrediction();
+            }
+          }
+        }
+      } catch (error) {
+        console.error("❌ Fetch error:", error);
+      }
+    }
+
+    function generatePrediction() {
+      const predictionElement = document.getElementById('prediction-result');
+      const historyList = document.getElementById('history-list');
+
+      let predictionText = "";
+      let directNumber, oppositeNumber;
+
+      if (forcedWin) {
+        directNumber = Math.floor(Math.random() * 4) + 6;
+        oppositeNumber = Math.floor(Math.random() * 5);
+        predictionText = "BIG";
+        forcedWin = false;
+        winStreakCount = 1;
+        allowLoss = false;
+      } else if (allowLoss) {
+        directNumber = Math.floor(Math.random() * 4);
+        oppositeNumber = Math.floor(Math.random() * 5) + 5;
+        predictionText = "SMALL";
+        allowLoss = false;
+        forcedWin = true;
+        winStreakCount = 0;
+      } else {
+        directNumber = Math.floor(Math.random() * 10);
+        oppositeNumber = (directNumber < 5)
+          ? (Math.floor(Math.random() * 5) + 5)
+          : Math.floor(Math.random() * 5);
+
+        predictionText = (directNumber >= 5) ? "BIG" : "SMALL";
+      }
+
+      predictionElement.innerHTML = `Prediction: ${predictionText} | Numbers: ${directNumber}, ${oppositeNumber}`;
+
+      history.unshift(`Period ${latestPeriod}: ${predictionText} | ${directNumber}, ${oppositeNumber}`);
+      if (history.length > 10) history.pop();
+      historyList.innerHTML = history.map(item => `<li>${item}</li>`).join('');
+
+      if (directNumber >= 5) {
+        winStreakCount++;
+        if (winStreakCount >= 4 && winStreakCount <= 5) {
+          allowLoss = true;
+        }
+      } else {
+        forcedWin = true;
+        winStreakCount = 0;
+        allowLoss = false;
+      }
+    }
+  </script>
+</body>
+  </html>
